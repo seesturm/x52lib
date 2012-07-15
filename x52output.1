@@ -1,0 +1,162 @@
+.TH x52output 1
+.SH NAME
+x52output \- command line frontend for the x52pro library
+.SH SYNOPSIS
+.nf
+\f3x52output text 0 'First Line'\f1
+\f3x52output text 1 'Second Line'\f1
+\f3x52output text 2 'Third Line'\f1
+\f3x52output bri 0 40\f1
+\f3x52output bri 1 50\f1
+\f3x52output led 1 1\f1         # not available for old X52
+\f3x52output time 1 12 20\f1
+\f3x52output date 7 10 17\f1
+\f3x52output second 30\f1       # YOKE only
+\f3x52output offset 0 1 0 90\f1 # set 90 minutes offset on time display 2
+.fi
+.SH DESCRIPTION
+.I x52output
+is a command line frontend for the x52pro MFD library. It is intended
+for debugging and/or scripting purposes.
+
+.PP
+The x52pro MFD
+library provides access to the display/LEDS of following SAITEK
+pro flight devices
+.IP \(bu
+X52 Pro Flight Control System
+.IP \(bu
+X52 Flight Control System
+.IP \(bu
+X52 Pro Flight Yoke.
+
+.PP
+.I x52output
+has following sub-commands:
+.TP
+\f3text\f1 \f2line\f1 \f2text\f1
+Outputs a single line of text to one of the three lines on the
+x52/x52pro MFD. \f2line\f1 is a number from 0 to 2, \f2text\f1
+is an alphanumeric text of length 16. Some graphical characters
+are also supported but no work has currently been spent on
+charset compatibility.
+
+.TP
+\f3bri\f1 \f2mfd\f1 \f2brightness\f1
+Sets the brightness of either the button LEDs (x52pro only) or the
+MFD. \f2mfd\f1=0 selects the buttons and \f2mfd\f1=1 selects the MFD.
+\f2brightness\f1 is a decimal value in the range from 0 to 127.
+
+.TP
+\f3led\f1 \f2led-idx\f1 \f2color\f1
+Sets the led color of one of the x52pro buttons. \f2led-idx\f1 is a
+value from 1 to 19. The meaning of the \f2led-idx\f1 values are
+specified in the next paragraph.
+
+.TP
+\f3time\f1 \f2h24\f1 \f2hour\f1 \f2minute\f1
+Sets the time shown on the MFD. \f2h24\f1=0 displays the time in
+AM/PM notation, \f2h24\f1=1 displays the time in 24 Hour notation.
+\f2hour\f1 is a value from 0 to 24 while \f2minute\f1 is a value
+from 0 to 60.
+
+.TP
+\f3date\f1 \f2year\f1 \f2month\f1 \f2mday\f1
+Sets the date shown on the MFD. \f2year\f1, \f2month\f1, and \f2mday\f1
+are just values from 0 to 99. Using this order will show as YY-MM-DD on
+the MFD but it is possible to use the three values in any order preferred.
+
+.TP
+\f3second\f1 \f2second\f1
+Sets the second value shown on the Pro Flight Yoke MFD. Can be a value
+from 0 to 59.
+
+.TP
+\f3offset\f1 \f2offset\f1
+Sets the time offset of the secondary and tertiary time display of the
+x52/x52pro MFD. \f2idx\f1=0 selects the secondary display while
+\f2idx\f1=1 selects the tertiary display. \f2neg\f1=0 sets a positive offset,
+\f2neg\f1=1 sets a negative offset.
+\f2offset\f1 is in minutes from 0 to 1023.
+
+.PP
+\f2led-idx\f1 for the \f3led\f1 sub-command can be one of the following values:
+.TP
+.B 1
+LED(s) of Fire Button
+.TP
+.B 2
+Red LED of A Button
+.TP
+.B 3
+Green LED of A Button
+.TP
+.B 4
+Red LED of B Button
+.TP
+.B 5
+Green LED of B Button
+.TP
+.B 6
+Red LED of D Button
+.TP
+.B 7
+Green LED of D Button
+.TP
+.B 8
+Red LED of E Button
+.TP
+.B 9
+Green LED of E Button
+.TP
+.B 10
+Red LED of T1 Switch
+.TP
+.B 11
+Green LED of T1 Switch
+.TP
+.B 12
+Red LED of T2 Switch
+.TP
+.B 13
+Green LED of T2 Switch
+.TP
+.B 14
+Red LED of T3 Switch
+.TP
+.B 15
+Green LED of T3 Switch
+.TP
+.B 16
+Red LED of Coolie Hat
+.TP
+.B 17
+Green LED of Coolie Hat
+.TP
+.B 18
+Red LED of i Button
+.TP
+.B 19
+Green LED of i Button
+
+.PP
+.I x52output
+needs write access to the raw x52 USB device. This package is supplied
+with udev rules for providing write access on the SAITEK MFD joysticks
+to the plugdev group members. If
+.I x52output
+fails, permission problems can be checked by means of running it with sudo.
+
+.SH EXIT STATUS
+If the joystick/yoke is not found
+.I x52output
+will return a status
+code of 1. In every other situation it will return a status code of 0.
+This includes malformed command lines.
+.SH BUGS
+.I x52output
+can currently control only a single SAITEK mfd device. If there are
+more than one devices attached to the system, the first will always
+be used.
+.SH AUTHOR
+Written by Eduard Hasenleithner <eduard@hasenleithner.at>

@@ -1,0 +1,39 @@
+This archive contains the Linux library for the MFD and the
+LEDs found on the SAITEK X52 PRO HOTAS joystick. The informations needed
+for accessing this nice device were kindly supplied by saitek.
+
+The code is released under the LGPL. For more details please read the
+COPYING file.
+
+Compilation of this library requires the libusb http://www.linux-usb.org/
+
+This package includes the udev rules for enabling device access
+to the plugdev group members. If x52lib has just been installed it
+is likely that udev does not yet know the new rules. If this is the
+case the rules can be reloaded with
+
+	sudo udevcontrol reload_rules
+	sudo udevtrigger
+
+UPDATE: The library now also supports the old X52 and the new
+Saitek Yoke. Since I do not own an old x52 I cannot test it.
+
+With the x52output program it is possible to test all the features
+of the library:
+
+x52output text 0 'First Line'
+x52output text 1 'Second Line'
+x52output text 2 'Third Line'
+x52output bri 0 40
+x52output bri 1 50
+x52output led 1 1   # not available for old X52
+x52output time 1 12 20
+x52output date 7 10 17
+x52output second 30 # YOKE only
+x52output offset 0 1 0 90    # set 90 minutes offset on time display 2
+
+The options are described in more detail in x52output(8).
+
+If you have any questions regarding using this library and/or the x52 pro
+please send an email to <eduard@hasenleithner.at>. I also welcome
+any hints for improvements of this library.

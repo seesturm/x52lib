@@ -1,0 +1,25 @@
+0.1.1 (2008-01-22)
+  Changed remaining references from x52test to x52output
+  Moved manpage for x52output to correct section 1
+  Fixed install section of makefile
+  Added another device-id (0x0255) for the old x52 Joystick
+  Changed udev rules to resemble the "45-libsane.rules" file
+
+0.1.0 (2008-01-21)
+  Merged libraryfication makefile from ubuntu.
+  Renamed x52test to x52output to generally expose its usability.
+  Added manpage for x52output
+  Added udev rules for giving plugdev members access.
+  Added debug enable function for suppressing debug output.
+
+0.0.3 (2007-12-20)
+  Implemented secondary and tertiary time display
+
+0.0.2 (2007-12-17)
+  Added support for old X52 and YOKE
+  Added Check functions if particular output function is possible for
+    the connected HID model.
+  Updated README for new "seconds" command
+
+0.0.1 (2007-11-04)
+  Initial release

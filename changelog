@@ -1,3 +1,7 @@
+0.1.2 (2012-07-21)
+  Adding GPL license headers to x52output.c and x52output.1
+  Adding GPL section to COPYING
+
 0.1.1 (2008-01-22)
   Changed remaining references from x52test to x52output
   Moved manpage for x52output to correct section 1

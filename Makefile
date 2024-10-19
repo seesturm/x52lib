@@ -20,6 +20,7 @@ install:
 	install -D x52output $(DESTDIR)/usr/bin/x52output
 	install -D -m 644 99-x52pro.rules $(DESTDIR)/etc/udev/rules.d/99-x52pro.rules
 	install -D -m 644 x52output.1.gz $(DESTDIR)/usr/share/man/man1/x52output.1.gz
+	install -D -m 644 x52pro.pc $(DESTDIR)/usr/lib/${DEB_HOST_MULTIARCH}/pkgconfig/x52pro.pc
 
 x52output: x52output.o $(X52LIB) -lusb
 x52output.1.gz: x52output.1

@@ -18,7 +18,7 @@ install:
 	ln -sf libx52pro.so.0 $(DESTDIR)/usr/lib/libx52pro.so
 	install -D -m 644 x52output.c $(DESTDIR)/usr/share/doc/libx52pro0/examples/x52output.c
 	install -D x52output $(DESTDIR)/usr/bin/x52output
-	install -D -m 644 99-x52pro.rules $(DESTDIR)/etc/udev/rules.d/99-x52pro.rules
+	install -D -m 644 99-x52pro.rules $(DESTDIR)/lib/udev/rules.d/99-x52pro.rules
 	install -D -m 644 x52output.1.gz $(DESTDIR)/usr/share/man/man1/x52output.1.gz
 
 x52output: x52output.o $(X52LIB) -lusb

@@ -1,12 +1,13 @@
-CFLAGS=-Wall -g -I.
-LDFLAGS=-g
+CFLAGS := -Wall -g -I. $(shell pkg-config --cflags libusb-1.0)
+LDFLAGS := -g
+LDLIBS := $(shell pkg-config --libs libusb-1.0)
 
-X52LIB=libx52pro.so.0.1.1
+X52LIB := libx52pro.so.0.2.0
 
 all: $(X52LIB) x52output x52output.1.gz
 
 $(X52LIB): x52pro.c
-	${CC} $< ${CFLAGS} -shared -Wl,-soname,libx52pro.so.0 -fPIC -D_REENTRANT -L. -lusb -o $@
+	$(CC) $< $(CFLAGS) -shared -Wl,-soname,libx52pro.so.0 -fPIC -D_REENTRANT -L. $(LDLIBS) -o $@
 
 clean:
 	-rm *.so* *.o x52output x52output.1.gz
@@ -22,6 +23,6 @@ install:
 	install -D -m 644 x52output.1.gz $(DESTDIR)/usr/share/man/man1/x52output.1.gz
 	install -D -m 644 x52pro.pc $(DESTDIR)/usr/lib/${DEB_HOST_MULTIARCH}/pkgconfig/x52pro.pc
 
-x52output: x52output.o $(X52LIB) -lusb
+x52output: x52output.o $(X52LIB)
 x52output.1.gz: x52output.1
 	gzip -c $< >$@

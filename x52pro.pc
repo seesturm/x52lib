@@ -5,6 +5,6 @@ includedir=${prefix}/include
 
 Name: libx52pro
 Description: MFD and LED configuration library for the Saitek X52 Pro Joystick
-Version: 0.1.1
+Version: 0.2.0
 Libs: -L${libdir} -lx52pro
 Cflags: -I${includedir}

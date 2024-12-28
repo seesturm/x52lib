@@ -16,6 +16,7 @@ enum x52_type {
 	DEV_X52, /**< Original X52 */
 	DEV_X52PRO, /**< PRO version of X52 */
 	DEV_YOKE, /**< Flight YOKE */
+	DEV_INVALID=99, /**< used to indicate errors */
 };
 
 #define X52PRO_LED_FIRE     1 /**< @brief RED/GREEN LED of Fire Button */

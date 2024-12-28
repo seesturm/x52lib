@@ -53,6 +53,11 @@ int clear_idx[3] = {
 
 int x52_settext(struct x52 *x52, int line, char *text, int length)
 {
+	if ((!x52) || (!text)) {
+		// Reject NULL pointers
+		return -10;
+	}
+
 	int r;
 	if (!x52->feat_mfd) {
 		x52printf(stderr, "settext not supported\n");
@@ -88,6 +93,11 @@ int x52_settext(struct x52 *x52, int line, char *text, int length)
 
 int x52_setbri(struct x52 *x52, int mfd, int brightness)
 {
+	if (!x52) {
+		// Reject NULL pointers
+		return -10;
+	}
+
 	int r;
 	if (!x52->feat_mfd) {
 		x52printf(stderr, "setbri not supported\n");
@@ -106,6 +116,11 @@ int x52_setbri(struct x52 *x52, int mfd, int brightness)
 
 int x52_setled(struct x52 *x52, int led, int on)
 {
+	if (!x52) {
+		// Reject NULL pointers
+		return -10;
+	}
+
 	int r;
 	if (!x52->feat_led) {
 		x52printf(stderr, "setled not supported\n");
@@ -127,6 +142,11 @@ int x52_setled(struct x52 *x52, int led, int on)
 
 int x52_settime(struct x52 *x52, int h24, int hour, int minute)
 {
+	if (!x52) {
+		// Reject NULL pointers
+		return -10;
+	}
+
 	int r;
 	r = libusb_control_transfer(x52->hdl,
 		LIBUSB_REQUEST_TYPE_VENDOR|LIBUSB_RECIPIENT_DEVICE,
@@ -141,6 +161,11 @@ int x52_settime(struct x52 *x52, int h24, int hour, int minute)
 
 int x52_setoffs(struct x52 *x52, int idx, int h24, int inv, int offset)
 {
+	if (!x52) {
+		// Reject NULL pointers
+		return -10;
+	}
+
 	int r;
 	r = libusb_control_transfer(x52->hdl,
 		LIBUSB_REQUEST_TYPE_VENDOR|LIBUSB_RECIPIENT_DEVICE,
@@ -157,6 +182,11 @@ int x52_setoffs(struct x52 *x52, int idx, int h24, int inv, int offset)
 
 int x52_setsecond(struct x52 *x52, int second)
 {
+	if (!x52) {
+		// Reject NULL pointers
+		return -10;
+	}
+
 	int r;
 	if (!x52->feat_sec) {
 		x52printf(stderr, "setsecond not supported\n");
@@ -175,6 +205,11 @@ int x52_setsecond(struct x52 *x52, int second)
 
 int x52_setdate(struct x52 *x52, int year, int month, int day)
 {
+	if (!x52) {
+		// Reject NULL pointers
+		return -10;
+	}
+
 	int r;
 	if (!x52->feat_mfd) {
 		x52printf(stderr, "setdate not supported\n");
@@ -201,6 +236,11 @@ int x52_setdate(struct x52 *x52, int year, int month, int day)
 
 int x52_custom(struct x52 *x52, int index, int value)
 {
+	if (!x52) {
+		// Reject NULL pointers
+		return -10;
+	}
+
 	int r = libusb_control_transfer(x52->hdl,
 		LIBUSB_REQUEST_TYPE_VENDOR|LIBUSB_RECIPIENT_DEVICE,
 		X52PRO_REQUEST, value, index, NULL, 0, 1000);
@@ -275,16 +315,31 @@ struct x52* x52_init(void)
 
 enum x52_type x52_gettype(struct x52* hdl)
 {
+	if (!hdl) {
+		// Reject NULL pointers
+		return DEV_INVALID;
+	}
+
 	return hdl->type;
 }
 
 void x52_close(struct x52* x52) 
 {
+	if (!x52) {
+		// Reject NULL pointers
+		return;
+	}
+
 	libusb_close(x52->hdl);
 	free(x52);
 }
 
 void x52_debug(struct x52* x52, int debug)
 {
+	if (!x52) {
+		// Reject NULL pointers
+		return;
+	}
+
 	x52->debug = !!debug;
 }

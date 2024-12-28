@@ -35,3 +35,7 @@ x52output.1.gz: x52output.1
 
 doxygen:
 	doxygen
+
+# Create symbolic link for local testing
+libx52pro.so.0:
+	ln -s libx52pro.so.0.2.0 $@

@@ -1,16 +1,22 @@
-CFLAGS := -Wall -g -I. $(shell pkg-config --cflags libusb-1.0)
-LDFLAGS := -g
-LDLIBS := $(shell pkg-config --libs libusb-1.0)
+.PHONY: all doxygen clean
+
+CC := gcc
+BUILDFLAGS := -g -O0
+CFLAGS := -Wall -Wextra -Wpedantic -std=c99 $(BUILDFLAGS) -I.
+LDFLAGS := $(BUILDFLAGS)
+USBINC := $(shell pkg-config --cflags libusb-1.0)
+USBLIB := $(shell pkg-config --libs libusb-1.0)
 
 X52LIB := libx52pro.so.0.2.0
 
 all: $(X52LIB) x52output x52output.1.gz
 
 $(X52LIB): x52pro.c
-	$(CC) $< $(CFLAGS) -shared -Wl,-soname,libx52pro.so.0 -fPIC -D_REENTRANT -L. $(LDLIBS) -o $@
+	$(CC) $< $(CFLAGS) $(USBINC) -shared -Wl,-soname,libx52pro.so.0 -fPIC -D_REENTRANT -L. $(USBLIB) -o $@
 
 clean:
 	-rm *.so* *.o x52output x52output.1.gz
+	-rm -R build
 
 install:
 	install -D -m 644 x52pro.h $(DESTDIR)/usr/include/x52pro.h
@@ -26,3 +32,6 @@ install:
 x52output: x52output.o $(X52LIB)
 x52output.1.gz: x52output.1
 	gzip -c $< >$@
+
+doxygen:
+	doxygen

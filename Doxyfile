@@ -1,0 +1,4 @@
+OUTPUT_DIRECTORY = build
+INPUT = x52pro.h
+
+GENERATE_LATEX = NO

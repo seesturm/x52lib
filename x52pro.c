@@ -112,6 +112,8 @@ int x52_setled(struct x52 *x52, int led, int on)
 		return -3;
 	}
 
+	on = !!on; // Ensure that only least significant bit is set
+
 	r = libusb_control_transfer(x52->hdl,
 		LIBUSB_REQUEST_TYPE_VENDOR|LIBUSB_RECIPIENT_DEVICE,
 		X52PRO_REQUEST, on | (led<<8), X52PRO_SETLED,
@@ -284,5 +286,5 @@ void x52_close(struct x52* x52)
 
 void x52_debug(struct x52* x52, int debug)
 {
-	x52->debug = debug;
+	x52->debug = !!debug;
 }

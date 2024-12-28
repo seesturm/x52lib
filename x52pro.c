@@ -223,7 +223,11 @@ struct x52* x52_init(void)
 	libusb_device **device_list;
 	libusb_device *joydev = NULL;
 
+#if LIBUSB_API_VERSION >= 0x0100010A
 	libusb_init_context(NULL, NULL, 0);
+# else
+	libusb_init(NULL);
+#endif /* LIBUSB_API_VERSION >= 0x0100010A */
 	ssize_t num_devices = libusb_get_device_list(NULL, &device_list);
 
 	memset(&x52, 0, sizeof(x52));

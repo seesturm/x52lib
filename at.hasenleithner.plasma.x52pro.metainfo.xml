@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<component>
+  <id>at.hasenleithner.plasma.x52pro</id>
+  <metadata_license>MIT</metadata_license>
+  <name>libx52pro0</name>
+  <summary>MFD and LED library for Saitek X52pro joysticks</summary>
+  <description>
+    <p>The library libx52pro is designed to support MFD and LED found
+    on Saitek X52 and X52pro joystick.  Library does not deal with the
+    HID part of the joystick since this feature is already fully
+    supported by the Linux kernel 2.6.x.  This package include the
+    x52output utility.</p>
+  </description>
+  <url type="homepage">https://github.com/seesturm/x52lib/</url>
+  <categories>
+    <category>System</category>
+  </categories>
+  <provides>
+    <modalias>usb:v06A3p0255d*</modalias>
+    <modalias>usb:v06A3p075Cd*</modalias>
+    <modalias>usb:v06A3p0762d*</modalias>
+    <modalias>usb:v06A3p0BACd*</modalias>
+  </provides>
+</component>

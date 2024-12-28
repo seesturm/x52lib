@@ -1,18 +1,24 @@
 .PHONY: all doxygen clean
 
 CC := gcc
-BUILDFLAGS := -g -O0
-CFLAGS := -Wall -Wextra -Wpedantic -std=c99 $(BUILDFLAGS) -I.
-LDFLAGS := $(BUILDFLAGS)
+CFLAGS := -Wall -Wextra -Wpedantic -std=c99 -g -O0
+LDFLAGS := -g
 USBINC := $(shell pkg-config --cflags libusb-1.0)
 USBLIB := $(shell pkg-config --libs libusb-1.0)
 
-X52LIB := libx52pro.so.0.2.0
+VERSION := 0.2.0
+X52LIB := libx52pro.so.$(VERSION)
 
 all: $(X52LIB) x52output x52output.1.gz
 
-$(X52LIB): x52pro.c
-	$(CC) $< $(CFLAGS) $(USBINC) -shared -Wl,-soname,libx52pro.so.0 -fPIC -D_REENTRANT -L. $(USBLIB) -o $@
+$(X52LIB): x52pro.o
+	$(CC) $< $(LDFLAGS) -shared -Wl,-soname,libx52pro.so.0 $(USBLIB) -o $@
+
+x52pro.o_CFLAGS := $(USBINC) -fPIC -D_REENTRANT
+x52output.o_CFLAGS := -I.
+
+%.o: %.c
+	$(CC) $(CFLAGS) $($@_CFLAGS) -c -o $@ $<
 
 clean:
 	-rm *.so* *.o x52output x52output.1.gz
@@ -37,5 +43,5 @@ doxygen:
 	doxygen
 
 # Create symbolic link for local testing
-libx52pro.so.0:
-	ln -s libx52pro.so.0.2.0 $@
+libx52pro.so.0: $(X52LIB)
+	ln -s $< $@

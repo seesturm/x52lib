@@ -95,6 +95,9 @@ int main(int argc, char**argv)
 		case DEV_YOKE:
 			printf("Model: Pro Flight Yoke\n");
 			break;
+		default:
+			printf("Unknown device model (%u)\n", type);
+			break;
 		}
 	} else if (!strcmp(cmd, "custom")) {
 		if (argc < 4) {

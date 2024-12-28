@@ -1,0 +1,4 @@
+x52output
+*.gz
+*.o
+libx52pro.so*

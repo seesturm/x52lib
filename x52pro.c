@@ -4,11 +4,12 @@
  */
 #include <stdio.h>
 #include <string.h>
-#include <usb.h>
+#include <stdlib.h>
+#include <libusb.h>
 #include "x52pro.h"
 
 struct x52 {
-	usb_dev_handle *hdl;
+	libusb_device_handle *hdl;
 	enum x52_type type;
 	unsigned feat_mfd:1;
 	unsigned feat_led:1;
@@ -58,12 +59,12 @@ int x52_settext(struct x52 *x52, int line, char *text, int length)
 		return -3;
 	}
 	if (line > 3) return -1;
-	r = usb_control_msg(x52->hdl,
-		USB_TYPE_VENDOR|USB_RECIP_DEVICE|USB_ENDPOINT_OUT,
+	r = libusb_control_transfer(x52->hdl,
+		LIBUSB_REQUEST_TYPE_VENDOR|LIBUSB_RECIPIENT_DEVICE,
 		X52PRO_REQUEST, 0x00, clear_idx[line], NULL, 0, 1000);
-	if (r < 0) {
+	if (r != LIBUSB_SUCCESS) {
 		x52printf(stderr, "x52_settext failed at clear command (%s)\n",
-			usb_strerror());
+			libusb_strerror(r));
 		return -2;
 	}
 
@@ -71,12 +72,12 @@ int x52_settext(struct x52 *x52, int line, char *text, int length)
 		int chars;
 		if (length == 1) chars = (' ' << 8) + *text;
 		else chars = *(unsigned short*) text;
-		r = usb_control_msg(x52->hdl,
-			USB_TYPE_VENDOR|USB_RECIP_DEVICE|USB_ENDPOINT_OUT,
+		r = libusb_control_transfer(x52->hdl,
+			LIBUSB_REQUEST_TYPE_VENDOR|LIBUSB_RECIPIENT_DEVICE,
 			X52PRO_REQUEST, chars, write_idx[line], NULL, 0, 1000);
-		if (r<0) {
+		if (r != LIBUSB_SUCCESS) {
 			x52printf(stderr, "x52_settext failed at write %d (%s)\n",
-				length, usb_strerror());
+				length, libusb_strerror(r));
 			return -2;
 		}
 		length -= 2;
@@ -92,12 +93,12 @@ int x52_setbri(struct x52 *x52, int mfd, int brightness)
 		x52printf(stderr, "setbri not supported\n");
 		return -3;
 	}
-	r = usb_control_msg(x52->hdl,
-		USB_TYPE_VENDOR|USB_RECIP_DEVICE|USB_ENDPOINT_OUT,
+	r = libusb_control_transfer(x52->hdl,
+		LIBUSB_REQUEST_TYPE_VENDOR|LIBUSB_RECIPIENT_DEVICE,
 		X52PRO_REQUEST, brightness, mfd ? X52PRO_MFDBRI : X52PRO_LEDBRI,
 		NULL, 0, 1000);
-	if (r < 0) {
-		x52printf(stderr, "x52_setbri failed (%s)\n", usb_strerror());
+	if (r != LIBUSB_SUCCESS) {
+		x52printf(stderr, "x52_setbri failed (%s)\n", libusb_strerror(r));
 		return -2;
 	}
 	return 0;
@@ -111,12 +112,12 @@ int x52_setled(struct x52 *x52, int led, int on)
 		return -3;
 	}
 
-	r = usb_control_msg(x52->hdl,
-		USB_TYPE_VENDOR|USB_RECIP_DEVICE|USB_ENDPOINT_OUT,
+	r = libusb_control_transfer(x52->hdl,
+		LIBUSB_REQUEST_TYPE_VENDOR|LIBUSB_RECIPIENT_DEVICE,
 		X52PRO_REQUEST, on | (led<<8), X52PRO_SETLED,
 		NULL, 0, 1000);
-	if (r < 0) {
-		x52printf(stderr, "x52_setled failed (%s)\n", usb_strerror());
+	if (r != LIBUSB_SUCCESS) {
+		x52printf(stderr, "x52_setled failed (%s)\n", libusb_strerror(r));
 		return -2;
 	}
 	return 0;
@@ -125,12 +126,12 @@ int x52_setled(struct x52 *x52, int led, int on)
 int x52_settime(struct x52 *x52, int h24, int hour, int minute)
 {
 	int r;
-	r = usb_control_msg(x52->hdl,
-		USB_TYPE_VENDOR|USB_RECIP_DEVICE|USB_ENDPOINT_OUT,
+	r = libusb_control_transfer(x52->hdl,
+		LIBUSB_REQUEST_TYPE_VENDOR|LIBUSB_RECIPIENT_DEVICE,
 		X52PRO_REQUEST, minute | (hour<<8) | (h24?0x8000:0), X52PRO_TIME,
 		NULL, 0, 1000);
-	if (r < 0) {
-		x52printf(stderr, "x52_settime failed (%s)\n", usb_strerror());
+	if (r != LIBUSB_SUCCESS) {
+		x52printf(stderr, "x52_settime failed (%s)\n", libusb_strerror(r));
 		return -2;
 	}
 	return 0;
@@ -139,12 +140,13 @@ int x52_settime(struct x52 *x52, int h24, int hour, int minute)
 int x52_setoffs(struct x52 *x52, int idx, int h24, int inv, int offset)
 {
 	int r;
-	r = usb_control_msg(x52->hdl,
-		USB_TYPE_VENDOR|USB_RECIP_DEVICE|USB_ENDPOINT_OUT, X52PRO_REQUEST,
+	r = libusb_control_transfer(x52->hdl,
+		LIBUSB_REQUEST_TYPE_VENDOR|LIBUSB_RECIPIENT_DEVICE,
+		X52PRO_REQUEST,
 		offset | (inv?1024:0) | (h24?0x8000:0), idx?X52PRO_OFFS3:X52PRO_OFFS2,
 		NULL, 0, 1000);
-	if (r < 0) {
-		x52printf(stderr, "x52_settime failed (%s)\n", usb_strerror());
+	if (r != LIBUSB_SUCCESS) {
+		x52printf(stderr, "x52_settime failed (%s)\n", libusb_strerror(r));
 		return -2;
 	}
 
@@ -158,12 +160,12 @@ int x52_setsecond(struct x52 *x52, int second)
 		x52printf(stderr, "setsecond not supported\n");
 		return -3;
 	}
-	r = usb_control_msg(x52->hdl,
-		USB_TYPE_VENDOR|USB_RECIP_DEVICE|USB_ENDPOINT_OUT,
+	r = libusb_control_transfer(x52->hdl,
+		LIBUSB_REQUEST_TYPE_VENDOR|LIBUSB_RECIPIENT_DEVICE,
 		X52PRO_REQUEST, second<<8, YOKE_SECOND,
 		NULL, 0, 1000);
-	if (r < 0) {
-		x52printf(stderr, "x52_setsecond failed (%s)\n", usb_strerror());
+	if (r != LIBUSB_SUCCESS) {
+		x52printf(stderr, "x52_setsecond failed (%s)\n", libusb_strerror(r));
 		return -2;
 	}
 	return 0;
@@ -176,20 +178,20 @@ int x52_setdate(struct x52 *x52, int year, int month, int day)
 		x52printf(stderr, "setdate not supported\n");
 		return -3;
 	}
-	r = usb_control_msg(x52->hdl,
-		USB_TYPE_VENDOR|USB_RECIP_DEVICE|USB_ENDPOINT_OUT,
+	r = libusb_control_transfer(x52->hdl,
+		LIBUSB_REQUEST_TYPE_VENDOR|LIBUSB_RECIPIENT_DEVICE,
 		X52PRO_REQUEST, day | (month<<8), X52PRO_DATE,
 		NULL, 0, 1000);
-	if (r < 0) {
-		x52printf(stderr, "x52_setdate failed (%s)\n", usb_strerror());
+	if (r != LIBUSB_SUCCESS) {
+		x52printf(stderr, "x52_setdate failed (%s)\n", libusb_strerror(r));
 		return -2;
 	}
-	r = usb_control_msg(x52->hdl,
-		USB_TYPE_VENDOR|USB_RECIP_DEVICE|USB_ENDPOINT_OUT,
+	r = libusb_control_transfer(x52->hdl,
+		LIBUSB_REQUEST_TYPE_VENDOR|LIBUSB_RECIPIENT_DEVICE,
 		X52PRO_REQUEST, year, X52PRO_YEAR,
 		NULL, 0, 1000);
-	if (r < 0) {
-		x52printf(stderr, "x52_setdate failed for year (%s)\n", usb_strerror());
+	if (r != LIBUSB_SUCCESS) {
+		x52printf(stderr, "x52_setdate failed for year (%s)\n", libusb_strerror(r));
 		return -2;
 	}
 	return 0;
@@ -197,12 +199,12 @@ int x52_setdate(struct x52 *x52, int year, int month, int day)
 
 int x52_custom(struct x52 *x52, int index, int value)
 {
-	int r = usb_control_msg(x52->hdl,
-		USB_TYPE_VENDOR|USB_RECIP_DEVICE|USB_ENDPOINT_OUT,
+	int r = libusb_control_transfer(x52->hdl,
+		LIBUSB_REQUEST_TYPE_VENDOR|LIBUSB_RECIPIENT_DEVICE,
 		X52PRO_REQUEST, value, index, NULL, 0, 1000);
-	if (r < 0) {
+	if (r != LIBUSB_SUCCESS) {
 		x52printf(stderr, "x52_settext failed at clear command (%s)\n",
-			usb_strerror());
+			libusb_strerror(r));
 		return -2;
 	}
 	return 0;
@@ -216,53 +218,54 @@ int x52_custom(struct x52 *x52, int index, int value)
 
 struct x52* x52_init(void)
 {
+	int r;
 	struct x52 x52, *x52p;
+	libusb_device **device_list;
+	libusb_device *joydev = NULL;
 
-	usb_init();
-	usb_find_busses();
-	usb_find_devices();
+	libusb_init_context(NULL, NULL, 0);
+	ssize_t num_devices = libusb_get_device_list(NULL, &device_list);
 
 	memset(&x52, 0, sizeof(x52));
 
-	struct usb_bus *bus;
-	struct usb_device *joydev = NULL;
-	for (bus = usb_busses; bus; bus = bus->next) {
-		struct usb_device *dev;
-		for (dev = bus->devices; dev; dev = dev->next) {
-			struct usb_device_descriptor *dsc = &dev->descriptor;
-			if (dsc->idVendor != VENDOR_SAITEK) continue;
-			switch (dsc->idProduct) {
-			case PRODUCT_X52_0:
-			case PRODUCT_X52_1:
-				x52.feat_mfd = 1;
-				x52.type = DEV_X52;
-				joydev = dev;
-				break;
-			case PRODUCT_X52PRO:
-				x52.feat_mfd = 1;
-				x52.feat_led = 1;
-				x52.type = DEV_X52PRO;
-				joydev = dev;
-				break;
-			case PRODUCT_YOKE:
-				x52.feat_sec = 1;
-				x52.type = DEV_YOKE;
-				joydev = dev;
-				break;
-			}
-			if (joydev) break;
+	for (int i=0; i<num_devices; i++) {
+		struct libusb_device_descriptor desc;
+		libusb_device *dev = device_list[i];
+		r = libusb_get_device_descriptor(dev, &desc);
+		if (desc.idVendor != VENDOR_SAITEK) continue;
+		switch (desc.idProduct) {
+		case PRODUCT_X52_0:
+		case PRODUCT_X52_1:
+			x52.feat_mfd = 1;
+			x52.type = DEV_X52;
+			joydev = dev;
+			break;
+		case PRODUCT_X52PRO:
+			x52.feat_mfd = 1;
+			x52.feat_led = 1;
+			x52.type = DEV_X52PRO;
+			joydev = dev;
+			break;
+		case PRODUCT_YOKE:
+			x52.feat_sec = 1;
+			x52.type = DEV_YOKE;
+			joydev = dev;
+			break;
 		}
 		if (joydev) break;
 	}
 	if (!joydev) {
 		fprintf(stderr, "joystick not found\n");
+		libusb_free_device_list(device_list, 1);
 		return NULL;
 	}
-	x52.hdl = usb_open(joydev);
-	if (x52.hdl==NULL) {
+	r = libusb_open(joydev, &x52.hdl);
+	if (r != LIBUSB_SUCCESS) {
 		fprintf(stderr, "joystick open failed\n");
+		libusb_free_device_list(device_list, 1);
 		return NULL;
 	}
+	libusb_free_device_list(device_list, 1);
 	x52p = malloc(sizeof(*x52p));
 	*x52p = x52;
 	return x52p;
@@ -275,8 +278,7 @@ enum x52_type x52_gettype(struct x52* hdl)
 
 void x52_close(struct x52* x52) 
 {
-	int r;
-	r = usb_close(x52->hdl);
+	libusb_close(x52->hdl);
 	free(x52);
 }
 

@@ -112,6 +112,7 @@ int x52_settime(struct x52 *hdl, int h24, int hour, int minute);
 @retval 0 success
 @param hdl device handle returned by x52_init
 @param idx offset index (==0 is offs2; >0 is offs3)
+@param h24 24h output (1=on, 0=off)
 @param inv invert offset (1=invert, 0=normal)
 @param offset time offset in minutes (0..1023)
     */
@@ -123,7 +124,7 @@ int x52_setoffs(struct x52 *hdl, int idx, int h24, int inv, int offset);
 @param hdl device handle returned by x52_init
 @param second second (0-59, actually higher values are also accepted)
     */
-int x52_setsecond(struct x52 *x52, int second);
+int x52_setsecond(struct x52 *hdl, int second);
 
 /** This function is supported by X52 and X52PRO
 @brief Set the MFD display date

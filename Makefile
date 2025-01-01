@@ -27,8 +27,8 @@ x52output.o_CFLAGS := -I.
 	$(CC) $(CFLAGS) $($@_CFLAGS) -c -o $@ $<
 
 clean:
-	-rm *.so* *.o x52output x52output.1.gz
-	-rm -R build
+	-$(RM) *.so* *.o x52output x52output.1.gz
+	-$(RM) -R build
 
 install:
 	$(INSTALL_DATA) -D x52pro.h $(DESTDIR)/usr/include/x52pro.h

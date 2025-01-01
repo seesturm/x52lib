@@ -6,4 +6,4 @@ ACTION=="add", SUBSYSTEMS=="usb", ATTRS{idVendor}=="06a3", ATTRS{idProduct}=="07
 ACTION=="add", SUBSYSTEMS=="usb", ATTRS{idVendor}=="06a3", ATTRS{idProduct}=="0762", TAG+="uaccess"
 
 #Pro Flight Yoke System
-ACTION=="add", SUBSYSTEM=="input", ATTR{idVendor}=="06a3", ATTR{idProduct}=="0bac", TAG+="uaccess"
+ACTION=="add", SUBSYSTEMS=="usb", ATTRS{idVendor}=="06a3", ATTRS{idProduct}=="0bac", TAG+="uaccess"

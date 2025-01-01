@@ -1,9 +1,0 @@
-#X52 Flight System
-ACTION=="add", SUBSYSTEMS=="usb", ATTRS{idVendor}=="06a3", ATTRS{idProduct}=="0255", MODE="660", GROUP="plugdev"
-ACTION=="add", SUBSYSTEMS=="usb", ATTRS{idVendor}=="06a3", ATTRS{idProduct}=="075c", MODE="660", GROUP="plugdev"
-
-#X52 Pro Flight System
-ACTION=="add", SUBSYSTEMS=="usb", ATTRS{idVendor}=="06a3", ATTRS{idProduct}=="0762", MODE="660", GROUP="plugdev"
-
-#Pro Flight Yoke System
-ACTION=="add", SUBSYSTEMS=="usb", ATTRS{idVendor}=="06a3", ATTRS{idProduct}=="0bac", MODE="660", GROUP="plugdev"

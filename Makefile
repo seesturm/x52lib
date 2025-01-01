@@ -1,15 +1,17 @@
 .PHONY: all doxygen clean
 
-CC := gcc
-CFLAGS := -Wall -Wextra -Wpedantic -std=c99 -g -O0
-LDFLAGS := -g
+# defaults
+CC ?= gcc
+CFLAGS ?= -Wall -Wextra -Wpedantic -std=c99 -g -O0
+LDFLAGS ?= -g
+INSTALL ?= install
+
+# package specific flags
 USBINC := $(shell pkg-config --cflags libusb-1.0)
 USBLIB := $(shell pkg-config --libs libusb-1.0)
-
 VERSION := 0.2.0
 X52LIB := libx52pro.so.$(VERSION)
 
-INSTALL := install
 INSTALL_DATA := $(INSTALL) -m644
 LIBDST := $(DESTDIR)/usr/lib
 

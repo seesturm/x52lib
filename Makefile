@@ -2,6 +2,7 @@
 
 # defaults
 CC ?= gcc
+CPPFLAGS ?=
 CFLAGS ?= -Wall -Wextra -Wpedantic -std=c99 -g -O0
 LDFLAGS ?= -g
 INSTALL ?= install
@@ -24,7 +25,7 @@ x52pro.o_CFLAGS := $(USBINC) -fPIC -D_REENTRANT
 x52output.o_CFLAGS := -I.
 
 %.o: %.c
-	$(CC) $(CFLAGS) $($@_CFLAGS) -c -o $@ $<
+	$(CC) ${CPPFLAGS} $(CFLAGS) $($@_CFLAGS) -c -o $@ $<
 
 clean:
 	-$(RM) *.so* *.o x52output x52output.1.gz

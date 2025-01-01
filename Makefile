@@ -2,9 +2,9 @@
 
 # defaults
 CC ?= gcc
-CPPFLAGS ?=
-CFLAGS ?= -Wall -Wextra -Wpedantic -std=c99 -g -O0
-LDFLAGS ?= -g
+CPPFLAGS ?= -Wdate-time -D_FORTIFY_SOURCE=2
+CFLAGS ?= -Wall -Wextra -Wpedantic -fstack-protector-strong -Wformat -Werror=format-security -std=c99 -g -O0
+LDFLAGS ?= -g -Wl,-z,relro
 INSTALL ?= install
 
 # package specific flags

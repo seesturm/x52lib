@@ -1,28 +1,53 @@
-CFLAGS := -Wall -g -I. $(shell pkg-config --cflags libusb-1.0)
-LDFLAGS := -g
-LDLIBS := $(shell pkg-config --libs libusb-1.0)
+.PHONY: all doxygen clean
 
-X52LIB := libx52pro.so.0.2.0
+# defaults
+CC ?= gcc
+CFLAGS ?= -Wall -Wextra -Wpedantic -std=c99 -g -O0
+LDFLAGS ?= -g
+INSTALL ?= install
+
+# package specific flags
+USBINC := $(shell pkg-config --cflags libusb-1.0)
+USBLIB := $(shell pkg-config --libs libusb-1.0)
+VERSION := 0.2.0
+X52LIB := libx52pro.so.$(VERSION)
+
+INSTALL_DATA := $(INSTALL) -m644
+LIBDST := $(DESTDIR)/usr/lib
 
 all: $(X52LIB) x52output x52output.1.gz
 
-$(X52LIB): x52pro.c
-	$(CC) $< $(CFLAGS) -shared -Wl,-soname,libx52pro.so.0 -fPIC -D_REENTRANT -L. $(LDLIBS) -o $@
+$(X52LIB): x52pro.o
+	$(CC) $< $(LDFLAGS) -shared -Wl,-soname,libx52pro.so.0 $(USBLIB) -o $@
+
+x52pro.o_CFLAGS := $(USBINC) -fPIC -D_REENTRANT
+x52output.o_CFLAGS := -I.
+
+%.o: %.c
+	$(CC) $(CFLAGS) $($@_CFLAGS) -c -o $@ $<
 
 clean:
 	-rm *.so* *.o x52output x52output.1.gz
+	-rm -R build
 
 install:
-	install -D -m 644 x52pro.h $(DESTDIR)/usr/include/x52pro.h
-	install -D -m 644 $(X52LIB) $(DESTDIR)/usr/lib/$(X52LIB)
-	ln -sf $(X52LIB) $(DESTDIR)/usr/lib/libx52pro.so.0
-	ln -sf libx52pro.so.0 $(DESTDIR)/usr/lib/libx52pro.so
-	install -D -m 644 x52output.c $(DESTDIR)/usr/share/doc/libx52pro0/examples/x52output.c
-	install -D x52output $(DESTDIR)/usr/bin/x52output
-	install -D -m 644 99-x52pro.rules $(DESTDIR)/lib/udev/rules.d/99-x52pro.rules
-	install -D -m 644 x52output.1.gz $(DESTDIR)/usr/share/man/man1/x52output.1.gz
-	install -D -m 644 x52pro.pc $(DESTDIR)/usr/lib/${DEB_HOST_MULTIARCH}/pkgconfig/x52pro.pc
+	$(INSTALL_DATA) -D x52pro.h $(DESTDIR)/usr/include/x52pro.h
+	$(INSTALL_DATA) -D $(X52LIB) $(LIBDST)/$(X52LIB)
+	ln -sf $(X52LIB) $(LIBDST)/libx52pro.so.0
+	ln -sf libx52pro.so.0 $(LIBDST)/libx52pro.so
+	$(INSTALL_DATA) -D x52pro.pc $(LIBDST)/pkgconfig/x52pro.pc
+	$(INSTALL_DATA) -D x52output.c $(DESTDIR)/usr/share/doc/libx52pro0/examples/x52output.c
+	$(INSTALL_DATA) -D x52output.1.gz $(DESTDIR)/usr/share/man/man1/x52output.1.gz
+	$(INSTALL) -D x52output $(DESTDIR)/usr/bin/x52output
+	$(INSTALL_DATA) -D 99-x52pro.rules $(DESTDIR)/lib/udev/rules.d/99-x52pro.rules
 
 x52output: x52output.o $(X52LIB)
 x52output.1.gz: x52output.1
 	gzip -c $< >$@
+
+doxygen:
+	doxygen
+
+# Create symbolic link for local testing
+libx52pro.so.0: $(X52LIB)
+	ln -s $< $@

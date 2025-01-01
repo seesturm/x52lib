@@ -6,4 +6,4 @@ ACTION=="add", SUBSYSTEMS=="usb", ATTRS{idVendor}=="06a3", ATTRS{idProduct}=="07
 ACTION=="add", SUBSYSTEMS=="usb", ATTRS{idVendor}=="06a3", ATTRS{idProduct}=="0762", MODE="660", GROUP="plugdev"
 
 #Pro Flight Yoke System
-ACTION=="add", SUBSYSTEM=="input", ATTR{idVendor}=="06a3", ATTR{idProduct}=="0bac", MODE="660", GROUP="plugdev"
+ACTION=="add", SUBSYSTEMS=="usb", ATTRS{idVendor}=="06a3", ATTRS{idProduct}=="0bac", MODE="660", GROUP="plugdev"

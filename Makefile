@@ -40,6 +40,7 @@ install:
 	$(INSTALL_DATA) -D x52output.1.gz $(DESTDIR)/usr/share/man/man1/x52output.1.gz
 	$(INSTALL) -D x52output $(DESTDIR)/usr/bin/x52output
 	$(INSTALL_DATA) -D 60-x52pro.rules $(DESTDIR)/lib/udev/rules.d/60-x52pro.rules
+	$(INSTALL_DATA) -D at.hasenleithner.plasma.x52pro.metainfo.xml $(DESTDIR)/usr/share/metainfo/at.hasenleithner.plasma.x52pro.metainfo.xml
 
 x52output: x52output.o $(X52LIB)
 x52output.1.gz: x52output.1
